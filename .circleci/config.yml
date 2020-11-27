@@ -178,11 +178,23 @@ jobs:
       - restore_cache:
           key: deps-cache--{{ checksum "rebar.lock" }}--{{ checksum "big_tests/rebar.lock" }}--{{ checksum "otp_version" }}
       - run:
+          name: Install dockerize
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db
+          command: |
+            dockerize -wait tcp://mongooseim-redis:6379 -timeout 60s # Wait for redis
+            dockerize -wait tcp://mongooseim-rmq:5672 -timeout 60s # Wait for rmq
+      - run:
           name: Setup database
           command: |
             # tools/travis-setup-db.sh
             # if [ $PRESET = ldap_mnesia ]; then sudo tools/travis-setup-ldap.sh; fi
-            # sudo tools/travis-setup-rmq.sh; tools/setup-redis.sh
             echo '127.0.0.1 muc.localhost' | sudo tee -a /etc/hosts
       - run:
           name: Run Big Tests
