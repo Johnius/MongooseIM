@@ -182,7 +182,7 @@ jobs:
             sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
             rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
-            DOCKERIZE_VERSION: v0.3.0
+            DOCKERIZE_VERSION: v0.6.1
       - run:
           name: Wait for db
           command: |
@@ -197,6 +197,8 @@ jobs:
       - run:
           name: Run Big Tests
           command: |
+            dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
+            dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
             SKIP_AUTO_COMPILE=true KEEP_COVER_RUNNING=1 ./tools/travis-test.sh -p $PRESET -s false
           no_output_timeout: 40m
       - fetch_coverage_packages
