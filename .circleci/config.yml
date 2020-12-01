@@ -140,9 +140,7 @@ jobs:
     docker:
       - image: cimg/elixir:1.11
       - image: circleci/redis:6.0.5
-        name: "mongooseim-redis"
       - image: rabbitmq:3.7-alpine
-        name: "mongooseim-rmq"
     parallelism: 1
     working_directory: ~/app
     parameters:
@@ -188,8 +186,8 @@ jobs:
       - run:
           name: Wait for db
           command: |
-            dockerize -wait tcp://mongooseim-redis:6379 -timeout 60s # Wait for redis
-            dockerize -wait tcp://mongooseim-rmq:5672 -timeout 60s # Wait for rmq
+            dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
+            dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
       - run:
           name: Setup database
           command: |
