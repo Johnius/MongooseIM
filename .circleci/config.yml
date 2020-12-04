@@ -24,6 +24,16 @@ commands:
           sudo apt-get update && \
           sudo apt-get install python3-pip -y && \
           pip3 install codecov && codecov
+  install_dockerize:
+    steps:
+      - run:
+          name: Install dockerize
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
 
 jobs:
   build:
@@ -175,30 +185,18 @@ jobs:
           key: build-cache-{{ .Branch }}-{{ .Revision }}--{{ checksum "otp_version" }}
       - restore_cache:
           key: deps-cache--{{ checksum "rebar.lock" }}--{{ checksum "big_tests/rebar.lock" }}--{{ checksum "otp_version" }}
-      - run:
-          name: Install dockerize
-          command: |
-            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-            sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-            rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.6.1
-      - run:
-          name: Wait for db
-          command: |
-            dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
-            dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
+      - install_dockerize
       - run:
           name: Setup database
           command: |
+            dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
+            dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
+            echo '127.0.0.1 muc.localhost' | sudo tee -a /etc/hosts
             # tools/travis-setup-db.sh
             # if [ $PRESET = ldap_mnesia ]; then sudo tools/travis-setup-ldap.sh; fi
-            echo '127.0.0.1 muc.localhost' | sudo tee -a /etc/hosts
       - run:
           name: Run Big Tests
           command: |
-            dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
-            dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
             SKIP_AUTO_COMPILE=true KEEP_COVER_RUNNING=1 ./tools/travis-test.sh -p $PRESET -s false
           no_output_timeout: 40m
       - fetch_coverage_packages
