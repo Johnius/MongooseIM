@@ -279,51 +279,51 @@ workflows:
   build_and_test:
     jobs:
       # ============= PACKAGES =============
-      - package:
-          name: centos_7
-          platform: centos_7
-          context: mongooseim-org
-          otp_package: 23.1-1
-      - package:
-          name: debian_stretch
-          platform: debian_stretch
-          context: mongooseim-org
-          otp_package: 23.1-1
+      # - package:
+      #     name: centos_7
+      #     platform: centos_7
+      #     context: mongooseim-org
+      #     otp_package: 23.1-1
+      # - package:
+      #     name: debian_stretch
+      #     platform: debian_stretch
+      #     context: mongooseim-org
+      #     otp_package: 23.1-1
       # ============= BASE BUILDS =============
       - build:
           name: otp_23
           erlang_version: "1.11" # Contains Erlang 23.1
           context: mongooseim-org
           build_prod: true
-      - build:
-          name: otp_22
-          erlang_version: "1.10" # Contains Erlang 22.3.4
-          context: mongooseim-org
-          build_prod: true
-      - build:
-          name: otp_21
-          erlang_version: "1.8.2" # Contains Erlang 21.3.8.8
-          context: mongooseim-org
-          build_prod: true
+      # - build:
+      #     name: otp_22
+      #     erlang_version: "1.10" # Contains Erlang 22.3.4
+      #     context: mongooseim-org
+      #     build_prod: true
+      # - build:
+      #     name: otp_21
+      #     erlang_version: "1.8.2" # Contains Erlang 21.3.8.8
+      #     context: mongooseim-org
+      #     build_prod: true
       # ============= SMALL TESTS =============
-      - small_tests:
-          name: small_tests_23
-          erlang_version: "1.11" # Contains Erlang 23.1
-          context: mongooseim-org
-          requires:
-            - otp_23
-      - small_tests:
-          name: small_tests_22
-          erlang_version: "1.10" # Contains Erlang 22.3.4
-          context: mongooseim-org
-          requires:
-            - otp_22
-      - small_tests:
-          name: small_tests_21
-          erlang_version: "1.8.2" # Contains Erlang 21.3.8.8
-          context: mongooseim-org
-          requires:
-            - otp_21
+      # - small_tests:
+      #     name: small_tests_23
+      #     erlang_version: "1.11" # Contains Erlang 23.1
+      #     context: mongooseim-org
+      #     requires:
+      #       - otp_23
+      # - small_tests:
+      #     name: small_tests_22
+      #     erlang_version: "1.10" # Contains Erlang 22.3.4
+      #     context: mongooseim-org
+      #     requires:
+      #       - otp_22
+      # - small_tests:
+      #     name: small_tests_21
+      #     erlang_version: "1.8.2" # Contains Erlang 21.3.8.8
+      #     context: mongooseim-org
+      #     requires:
+      #       - otp_21
       # ============= MOST RECENT VERSION TESTS =============
       - big_tests:
           name: internal_mnesia
@@ -334,19 +334,19 @@ workflows:
           requires:
             - otp_23
       # ============= DIALYZER =============
-      - dialyzer:
-          name: dialyzer
-          context: mongooseim-org
-          requires:
-            - otp_23
+      # - dialyzer:
+      #     name: dialyzer
+      #     context: mongooseim-org
+      #     requires:
+      #       - otp_23
       # ============= DOCKER IMAGE BUILD & UPLOAD =============
-      - docker_image:
-          name: docker_build_and_ship
-          context: mongooseim-org
-          requires:
-            - otp_23
-            - small_tests_23
-            - small_tests_22
-            - small_tests_21
-            - dialyzer
-            # - internal_mnesia
+      # - docker_image:
+      #     name: docker_build_and_ship
+      #     context: mongooseim-org
+      #     requires:
+      #       - otp_23
+      #       - small_tests_23
+      #       - small_tests_22
+      #       - small_tests_21
+      #       - dialyzer
+      #       # - internal_mnesia
