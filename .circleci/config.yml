@@ -149,7 +149,8 @@ jobs:
   big_tests:
     docker:
       - image: cimg/elixir:1.11
-      - image: circleci/redis:3.2.11
+      - image: circleci/redis:6.0.5
+      # - image: circleci/redis:3.2.11
       # - image: rabbitmq:3.7-alpine
     parallelism: 1
     working_directory: ~/app
@@ -192,6 +193,8 @@ jobs:
             dockerize -wait tcp://localhost:6379 -timeout 60s # Wait for redis
             # dockerize -wait tcp://localhost:5672 -timeout 60s # Wait for rmq
             echo '127.0.0.1 muc.localhost' | sudo tee -a /etc/hosts
+            echo '127.0.0.1 localhost.bis' | sudo tee -a /etc/hosts
+            echo '127.0.0.1 localhost' | sudo tee -a /etc/hosts
             # tools/travis-setup-db.sh
             # if [ $PRESET = ldap_mnesia ]; then sudo tools/travis-setup-ldap.sh; fi
       - run:
