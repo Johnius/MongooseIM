@@ -1043,8 +1043,6 @@ validate_non_empty_atom(Value) when is_atom(Value), Value =/= '' -> ok.
 
 validate_non_empty_string(Value) when is_list(Value), Value =/= "" -> ok.
 
-validate_non_empty_list(Value) when is_list(Value), Value =/= [] -> ok.
-
 validate_jid(Jid) ->
     case jid:from_binary(Jid) of
         #jid{} ->
