@@ -232,24 +232,6 @@ validate([<<"body">>, <<"welcome_message">>, <<"mod_register">>, <<"modules">>|_
 validate([<<"subject">>, <<"welcome_message">>, <<"mod_register">>, <<"modules">>|_],
          [{subject, V}]) ->
     validate_string(V);
-validate([<<"type">>, _, <<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{type, V}]) ->
-    validate_non_empty_atom(V);
-validate([<<"host">>, _,<<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{host, V}]) ->
-    validate_non_empty_list(V);
-validate([<<"port">>, _,<<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{port, V}]) ->
-    validate_port(V);
-validate([<<"transport">>,_, <<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{transport, V}]) ->
-    validate_non_empty_list(V);
-validate([<<"username">>, _,<<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{username, V}]) ->
-    validate_non_empty_list(V);
-validate([<<"password">>, _,<<"service">>, <<"mod_extdisco">>, <<"modules">>|_],
-         [{password, V}]) ->
-    validate_non_empty_list(V);
 validate([<<"backend">>, <<"mod_http_upload">>, <<"modules">>|_],
          [{backend, V}]) ->
     validate_backend(mod_http_upload, V);

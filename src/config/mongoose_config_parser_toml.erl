@@ -107,8 +107,6 @@ post_process_module(Mod, Opts) ->
 
 %% path: (host_config[].)modules.*.*
 -spec module_opt(path(), toml_value()) -> [option()].
-module_opt([<<"service">>, <<"mod_extdisco">>|_] = Path, V) ->
-    parse_list(Path, V);
 module_opt([<<"host">>, <<"mod_http_upload">>|_], V) ->
     [{host, b2l(V)}];
 module_opt([<<"backend">>, <<"mod_http_upload">>|_], V) ->
@@ -441,22 +439,6 @@ riak_opts([<<"search_index">>|_], V) ->
 -spec mod_register_ip_access_rule(path(), toml_section()) -> [option()].
 mod_register_ip_access_rule(_, #{<<"address">> := Addr, <<"policy">> := Policy}) ->
     [{b2a(Policy), b2l(Addr)}].
-
--spec mod_extdisco_service(path(), toml_value()) -> [option()].
-mod_extdisco_service([_, <<"service">>|_] = Path, V) ->
-    [parse_section(Path, V)];
-mod_extdisco_service([<<"type">>|_], V) ->
-    [{type, b2a(V)}];
-mod_extdisco_service([<<"host">>|_], V) ->
-    [{host, b2l(V)}];
-mod_extdisco_service([<<"port">>|_], V) ->
-    [{port, V}];
-mod_extdisco_service([<<"transport">>|_], V) ->
-    [{transport, b2l(V)}];
-mod_extdisco_service([<<"username">>|_], V) ->
-    [{username, b2l(V)}];
-mod_extdisco_service([<<"password">>|_], V) ->
-    [{password, b2l(V)}].
 
 -spec mod_http_upload_s3(path(), toml_value()) -> [option()].
 mod_http_upload_s3([<<"bucket_url">>|_], V) ->
@@ -1011,7 +993,8 @@ node_to_string(Node) -> [binary_to_list(Node)].
         Mod =/= <<"mod_carboncopy">>,
         Mod =/= <<"mod_csi">>,
         Mod =/= <<"mod_disco">>,
-        Mod =/= <<"mod_event_pusher">>). % TODO temporary, remove with 'handler/1'
+        Mod =/= <<"mod_event_pusher">>,
+        Mod =/= <<"mod_extdisco">>). % TODO temporary, remove with 'handler/1'
 
 -spec handler(path()) ->
           fun((path(), toml_value()) -> option()) | mongoose_config_spec:config_node().
@@ -1029,10 +1012,6 @@ handler([_, <<"registration_watchers">>, <<"mod_register">>, <<"modules">>]) ->
     fun(_, V) -> [V] end;
 handler([_, <<"welcome_message">>, <<"mod_register">>, <<"modules">>]) ->
     fun welcome_message/2;
-handler([_, <<"service">>, <<"mod_extdisco">>, <<"modules">>]) ->
-    fun mod_extdisco_service/2;
-handler([_, _, <<"service">>, <<"mod_extdisco">>, <<"modules">>]) ->
-    fun mod_extdisco_service/2;
 handler([_, <<"s3">>, <<"mod_http_upload">>, <<"modules">>]) ->
     fun mod_http_upload_s3/2;
 handler([_, <<"reset_markers">>, <<"mod_inbox">>, <<"modules">>]) ->

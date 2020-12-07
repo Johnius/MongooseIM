@@ -737,7 +737,9 @@ all_modules() ->
      mod_carboncopy,
      mod_csi,
      mod_disco,
-     mod_event_pusher].
+     mod_event_pusher,
+     mod_extdisco
+    ].
 
 %% path: (host_config[].)modules.*.iqdisc
 iqdisc() ->
